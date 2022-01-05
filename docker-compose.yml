@@ -1,0 +1,40 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:10
+    container_name: postgres_druid
+    environment:
+      - TZ=Asia/Kuala_Lumpur       
+      - POSTGRES_PASSWORD=druid
+      - POSTGRES_USER=druid
+      - POSTGRES_DB=druid
+    ports:
+      - "5434:5432"
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+
+  druid:
+    image: apache-druid:0.18.1
+    container_name: druid
+    restart: always
+    environment:
+      - TZ=Asia/Kuala_Lumpur
+    depends_on: 
+      - postgres 
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
+      - "8091:8091"
+      - "8090:8090"
+      - "8888:8888"
+    volumes:
+      - ./run/data:/home/data
+      - ./run/conf:/home/druid/apache-druid-0.18.1/conf
+      - ./run/var:/home/druid/apache-druid-0.18.1/var
+
+volumes:
+  metadata_data: {}
